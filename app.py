@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 stores = [
@@ -16,7 +16,7 @@ stores = [
 
 @app.route('/')
 def home():
-    return 'Hello World!'
+    return render_template("index.html")
 
 
 @app.route('/store', methods=["GET"])
@@ -63,7 +63,7 @@ def create_item_in_store(name):
                 "name": request_data["name"],
                 "price": request_data["price"]
             }
-            
+
             store["items"].append(new_item)
             return jsonify({"message": "Item added successfully"}, new_item)
 
