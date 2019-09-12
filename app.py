@@ -30,6 +30,11 @@ class Item(Resource):
         items.append(new_item)
         return new_item, 201
 
+    def delete(self, name):
+        global items
+        items = list(filter(lambda x: x["name"] != name, items))
+        return {"message": "Item deleted"}, 204
+
 
 class ItemList(Resource):
     def get(self):
