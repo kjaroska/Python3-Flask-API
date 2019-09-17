@@ -15,7 +15,7 @@ items = [{"name": "chair", "price": 15.88}]
 
 
 class Item(Resource):
-    parser.reqparse.RequestParser()
+    parser = reqparse.RequestParser()
     parser.add_argument("price", type=float, required=True, help="This field cannot be left blank!")
 
 
