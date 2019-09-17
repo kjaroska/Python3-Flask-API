@@ -1,4 +1,5 @@
 import sqlite3
+from flask_restful import Resource, reqparse
 
 
 class User:
@@ -18,7 +19,7 @@ class User:
 
         if row:
             user = cls(*row)
-            # *riw = row[0], row[1], row[2]
+            # *row = row[0], row[1], row[2]
         else:
             user = None
 
@@ -36,7 +37,6 @@ class User:
 
         if row:
             user = cls(*row)
-            # *riw = row[0], row[1], row[2]
         else:
             user = None
 

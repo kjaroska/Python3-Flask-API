@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 
 from security import authenticate, identity
+from user_register import UserRegister
 
 app = Flask(__name__)
 app.debug = True
@@ -17,7 +18,6 @@ items = [{"name": "chair", "price": 15.88}]
 class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("price", type=float, required=True, help="This field cannot be left blank!")
-
 
     @jwt_required()
     def get(self, name):
@@ -57,6 +57,7 @@ class ItemList(Resource):
 
 api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
+api.add_resource(UserRegister, "/register")
 
 
 @app.route('/')
