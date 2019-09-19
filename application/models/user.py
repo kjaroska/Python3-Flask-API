@@ -1,5 +1,6 @@
 import sqlite3
 from flask_restful import Resource, reqparse
+from ..resources.configuration import dbLocation
 
 
 class User:
@@ -11,7 +12,7 @@ class User:
 
     @classmethod
     def find_by_username(cls, username):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
 
         query = "SELECT * FROM users WHERE username=?"
@@ -29,7 +30,7 @@ class User:
 
     @classmethod
     def find_by_id(cls, _id):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
 
         query = "SELECT * FROM users WHERE id=?"

@@ -2,6 +2,8 @@ import sqlite3
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
+from ..resources.configuration import dbLocation
+
 
 class Item(Resource):
     parser = reqparse.RequestParser()
@@ -9,7 +11,7 @@ class Item(Resource):
 
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
 
         query = "SELECT * FROM items WHERE name=?"
@@ -22,7 +24,7 @@ class Item(Resource):
 
     @classmethod
     def insert_item(cls, new_item):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
 
         query = "INSERT INTO items VALUES (?, ?)"
@@ -33,7 +35,7 @@ class Item(Resource):
 
     @classmethod
     def update_item(cls, item):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
 
         query = "UPDATE items SET price=? WHERE name=?"
@@ -69,7 +71,7 @@ class Item(Resource):
 
 
     def delete(self, name):
-        connection = sqlite3.connect("../resources/data.db")
+        connection = sqlite3.connect("/")
         cursor = connection.cursor()
 
         query = "DELETE FROM items WHERE name=?"
@@ -104,4 +106,15 @@ class Item(Resource):
 
 class ItemList(Resource):
     def get(self):
-        return {"item": items}
+        connection = sqlite3.connect(dbLocation)
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM items"
+        result = cursor.execute(query)
+
+        items = []
+        for row in result:
+            items.append({"name": row[0], "price": row[1]})
+        
+        connection.close()
+        return {"items": items}, 200
