@@ -1,9 +1,10 @@
 import sqlite3
 from flask_restful import Resource, reqparse
-from ..resources.configuration import dbLocation
+
+from .._static.configuration import dbLocation
 
 
-class User:
+class UserModel:
     def __init__(self, _id, username, password):
         self.id = _id
         self.username = username

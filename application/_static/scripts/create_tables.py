@@ -1,5 +1,5 @@
 import sqlite3
-from ..resources.configuration import dbLocation
+from ..configuration import dbLocation
 
 connection = sqlite3.connect(dbLocation)
 cursor = connection.cursor()

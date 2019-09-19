@@ -1,6 +1,7 @@
 ## PIP Install
 * Flask-RESTful
 * Flask-JWT
+* Flask-SQLAlchemy
 
 
 ## Resources
