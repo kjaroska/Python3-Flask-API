@@ -15,7 +15,7 @@ class Item(Resource):
         cursor = connection.cursor()
 
         query = "SELECT * FROM items WHERE name=?"
-        result = cursor.execute(query, (name),)
+        result = cursor.execute(query, (name,))
         row = result.fetchone()
         connection.close()
 
@@ -26,9 +26,9 @@ class Item(Resource):
     def insert_item(cls, new_item):
         connection = sqlite3.connect(dbLocation)
         cursor = connection.cursor()
-
-        query = "INSERT INTO items VALUES (?, ?)"
-        cursor.execute(query, (new_item["name", new_item["price"]]))
+        
+        query = "INSERT INTO items (name, price) VALUES (?, ?)"
+        cursor.execute(query, (new_item["name"], new_item["price"]))
 
         connection.commit()
         connection.close()
@@ -70,19 +70,6 @@ class Item(Resource):
         return new_item, 201
 
 
-    def delete(self, name):
-        connection = sqlite3.connect("/")
-        cursor = connection.cursor()
-
-        query = "DELETE FROM items WHERE name=?"
-        cursor.execute(query, (name,))
-
-        connection.commit()
-        connection.close()
-
-        return {"message": "Item deleted"}, 204
-
-
     def put(self, name):
         data = Item.parser.parse_args()
 
@@ -101,6 +88,19 @@ class Item(Resource):
                 return {"message": "An error occured updating the item."}, 500
 
         return updated_item
+
+
+    def delete(self, name):
+        connection = sqlite3.connect(dbLocation)
+        cursor = connection.cursor()
+
+        query = "DELETE FROM items WHERE name=?"
+        cursor.execute(query, (name,))
+
+        connection.commit()
+        connection.close()
+
+        return {"message": "Item deleted"}, 204
 
 
 
