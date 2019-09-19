@@ -1,10 +1,10 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_restful import Api
 from flask_jwt import JWT
 
-from security import authenticate, identity
-from user_register import UserRegister
-from item import Item, ItemList
+from application.security import authenticate, identity
+from application.user_register import UserRegister
+from application.models.item import Item, ItemList
 
 app = Flask(__name__)
 app.secret_key = "secret_key"
