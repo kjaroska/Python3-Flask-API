@@ -9,7 +9,7 @@ class Item(Resource):
 
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect("data.db")
+        connection = sqlite3.connect("../resources/data.db")
         cursor = connection.cursor()
 
         query = "SELECT * FROM items WHERE name=?"
@@ -36,7 +36,7 @@ class Item(Resource):
         data = Item.parser.parse_args()
         new_item = {"name": name, "price": data["price"]}
 
-        connection = sqlite3.connect("data.db")
+        connection = sqlite3.connect("../resources/data.db")
         cursor = connection.cursor()
 
         query = "INSERT INTO items VALUES (?, ?)"
@@ -48,8 +48,15 @@ class Item(Resource):
         return new_item, 201
 
     def delete(self, name):
-        global items
-        items = list(filter(lambda x: x["name"] != name, items))
+        connection = sqlite3.connect("../resources/data.db")
+        cursor = connection.cursor()
+
+        query = "DELETE FROM items WHERE name=?"
+        cursor.execute(query, (name,))
+
+        connection.commit()
+        connection.close()
+        
         return {"message": "Item deleted"}, 204
 
     def put(self, name):
