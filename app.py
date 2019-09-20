@@ -5,8 +5,11 @@ from flask_jwt import JWT
 from application.security import authenticate, identity
 from application._resources.user_register import UserRegister
 from application._resources.item import Item, ItemList
+from application._static.configuration import dbLocation
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///application/_static/data.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "secret_key"
 api = Api(app)
 
@@ -21,4 +24,6 @@ def home():
     return render_template("index.html")
 
 if __name__ == '__main__':
+    from application.db import db # import here due to circular import
+    db.init_app(app)
     app.run(port=5000, debug=True)
