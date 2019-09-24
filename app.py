@@ -2,10 +2,9 @@ import os
 
 from flask import Flask, render_template
 from flask_restful import Api
-from flask_jwt import JWT
+from flask_jwt_extended import JWTManager
 
-from application.security import authenticate, identity
-from application._resources.user_register import UserRegister, User
+from application._resources.user_register import UserRegister, User, UserLogin
 from application._resources.item import Item, ItemList
 from application._resources.store import Store, StoreList
 from application._static.configuration import dbLocation
@@ -17,7 +16,7 @@ app.config["PROPAGATE_EXCEPTIONS"] = True # Flask extensions can return their in
 app.secret_key = "secret_key"
 api = Api(app)
 
-jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
 
 api.add_resource(Store, "/store/<string:name>")
 api.add_resource(StoreList, "/stores")
@@ -25,6 +24,7 @@ api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
+api.add_resource(UserLogin, "/login")
 
 @app.route('/')
 def home():
