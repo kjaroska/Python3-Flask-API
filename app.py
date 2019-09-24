@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
-from application._resources.user_register import UserRegister, User, UserLogin
+from application._resources.user_register import UserRegister, User, UserLogin, TokenRefresh
 from application._resources.item import Item, ItemList
 from application._resources.store import Store, StoreList
 from application._static.configuration import dbLocation
@@ -33,6 +33,7 @@ api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
+api.add_resource(TokenRefresh, "/refresh")
 
 @app.route('/')
 def home():
