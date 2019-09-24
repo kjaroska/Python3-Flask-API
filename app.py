@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template
 from flask_restful import Api
 from flask_jwt import JWT
@@ -9,7 +11,7 @@ from application._resources.store import Store, StoreList
 from application._static.configuration import dbLocation
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///application/_static/data.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///application/_static/data.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "secret_key"
 api = Api(app)
