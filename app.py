@@ -5,7 +5,7 @@ from flask_restful import Api
 from flask_jwt import JWT
 
 from application.security import authenticate, identity
-from application._resources.user_register import UserRegister
+from application._resources.user_register import UserRegister, User
 from application._resources.item import Item, ItemList
 from application._resources.store import Store, StoreList
 from application._static.configuration import dbLocation
@@ -13,6 +13,7 @@ from application._static.configuration import dbLocation
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///application/_static/data.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["PROPAGATE_EXCEPTIONS"] = True # Flask extensions can return their internal exceptions and custom errors
 app.secret_key = "secret_key"
 api = Api(app)
 
@@ -23,10 +24,15 @@ api.add_resource(StoreList, "/stores")
 api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
 api.add_resource(UserRegister, "/register")
+api.add_resource(User, "/user/<int:user_id>")
 
 @app.route('/')
 def home():
     return render_template("index.html")
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 if __name__ == '__main__':
