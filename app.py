@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
@@ -24,7 +24,35 @@ def add_claims_to_jwt(identity): #identity => user.id
         return {"is_admin": True}
     
     return {"is_admin": False}
+
+@jwt.expired_token_loader # if user token is expired during request
+def expired_token_callback():
+    return jsonify({
+        "description": "The token has expired.",
+        "error": "token_expired"
+    }), 401
     
+@jwt.invalid_token_loader # user sends non-jwt valid token
+def invalid_token_callback(error):
+    return jsonify({
+        "description": "Signature verification failed.",
+        "error": "invalid_token"
+    }), 401
+
+@jwt.unauthorized_loader # no jwt token in request
+def missing_token_callback(error):
+    return jsonify({
+        "description": "Request does not cointain an access token.",
+        "error": "authorization_required"
+    }), 401
+
+@jwt.needs_fresh_token_loader
+def tokent_not_fresh_callback():
+    return jsonify({
+        "description": "The token is not fresh.",
+        "error": "fresh_token_required"
+    }), 401
+
 
 api.add_resource(Store, "/store/<string:name>")
 api.add_resource(StoreList, "/stores")

@@ -1,5 +1,11 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, jwt_optional, get_jwt_claims, get_jwt_identity
+from flask_jwt_extended import (
+    jwt_required,
+    jwt_optional,
+    get_jwt_claims,
+    get_jwt_identity,
+    fresh_jwt_required
+)
 from .._models.item import ItemModel
 
 from .._static.configuration import dbLocation
@@ -34,6 +40,7 @@ class Item(Resource):
         return new_item, 201
 
 
+    @fresh_jwt_required
     def put(self, name):
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
@@ -76,4 +83,3 @@ class ItemList(Resource):
         return {
             "items": [item["name"] for item in items],
             "message": "More data available after loggin in."}, 200
-        # [item.json() for item in ItemModel.query.all()]
