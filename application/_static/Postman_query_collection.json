@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "auth",
+			"name": "/login_admin",
 			"event": [
 				{
 					"listen": "test",
@@ -15,8 +15,12 @@
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);",
 							"tests[\"TokenNotEmpty\"] = jsonData.access_token !== undefined;",
+							"tests[\"StatusCodeIs200\"] = responseCode.code === 200;",
+							"tests[\"BodyContainsAccess_Token\"] = responseBody.has(\"access_token\");",
+							"tests[\"BodyContainsRefresh_Token\"] = responseBody.has(\"refresh_token\");",
 							"",
-							"postman.setEnvironmentVariable(\"jwt_token\", jsonData.access_token)"
+							"postman.setEnvironmentVariable(\"jwt_token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"jwt_refresh_token\", jsonData.refresh_token);"
 						],
 						"type": "text/javascript"
 					}
@@ -37,24 +41,165 @@
 					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/auth",
-					"protocol": "http",
+					"raw": "{{url}}/login",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
 					"path": [
-						"auth"
+						"login"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "register_user",
+			"name": "/login_user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "492cb91b-9dc3-4797-ab7b-132526a5bd36",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"TokenNotEmpty\"] = jsonData.access_token !== undefined;",
+							"tests[\"StatusCodeIs200\"] = responseCode.code === 200;",
+							"tests[\"BodyContainsAccess_Token\"] = responseBody.has(\"access_token\");",
+							"tests[\"BodyContainsRefresh_Token\"] = responseBody.has(\"refresh_token\");",
+							"",
+							"postman.setEnvironmentVariable(\"jwt_token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"jwt_refresh_token\", jsonData.refresh_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user\",\n\t\"password\": \"user\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "492cb91b-9dc3-4797-ab7b-132526a5bd36",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"TokenNotEmpty\"] = jsonData.access_token !== undefined;",
+							"tests[\"StatusCodeIs200\"] = responseCode.code === 200;",
+							"tests[\"BodyContainsAccess_Token\"] = responseBody.has(\"access_token\");",
+							"tests[\"BodyContainsRefresh_Token\"] = responseBody.has(\"refresh_token\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "492cb91b-9dc3-4797-ab7b-132526a5bd36",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"TokenNotEmpty\"] = jsonData.access_token !== undefined;",
+							"tests[\"StatusCodeIs200\"] = responseCode.code === 200;",
+							"tests[\"BodyContainsAccess_Token\"] = responseBody.has(\"access_token\");",
+							"",
+							"postman.setEnvironmentVariable(\"jwt_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_refresh_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/refresh",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_register",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -75,15 +220,43 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/register",
-					"protocol": "http",
+					"raw": "{{url}}/register",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user\",\n\t\"password\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/register",
+					"host": [
+						"{{url}}"
+					],
 					"path": [
 						"register"
 					]
@@ -111,7 +284,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "JWT {{JWT_token}}",
+						"value": "Bearer {{jwt_token}}",
 						"type": "text"
 					}
 				],
@@ -134,23 +307,24 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "JWT {{jwt_token}}",
+						"value": "Bearer {{jwt_token}}",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:5000/item/piano",
-					"protocol": "http",
+					"raw": "{{url}}/item/piano",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
 					"path": [
 						"item",
 						"piano"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": ""
+						}
 					]
 				}
 			},
@@ -166,6 +340,11 @@
 						"name": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -178,38 +357,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/item/piano_cheap",
-					"protocol": "http",
+					"raw": "{{url}}/item/piano",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
-					"path": [
-						"item",
-						"piano_cheap"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "item/<string:name>",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://127.0.0.1:5000/item/piano",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
 					"path": [
 						"item",
 						"piano"
@@ -219,7 +370,31 @@
 			"response": []
 		},
 		{
-			"name": "items Copy",
+			"name": "item/<string:name>",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/item/piano",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"piano"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/stores",
 			"event": [
 				{
 					"listen": "test",
@@ -238,8 +413,8 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "JWT {{JWT_token}}",
-						"type": "text"
+						"type": "text",
+						"value": "JWT {{JWT_token}}"
 					}
 				],
 				"url": {
@@ -266,15 +441,10 @@
 					}
 				],
 				"url": {
-					"raw": "http://127.0.0.1:5000/store/music",
-					"protocol": "http",
+					"raw": "{{url}}/store/music",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
 					"path": [
 						"store",
 						"music"
@@ -305,18 +475,91 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/store/sport",
-					"protocol": "http",
+					"raw": "{{url}}/store/sport",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"{{url}}"
 					],
-					"port": "5000",
 					"path": [
 						"store",
 						"sport"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/user/<int:user_id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3f358450-45f7-4dae-bdb7-16446c0eba66",
+						"exec": [
+							"tests[\"ShortResponseTime\"] = responseTime < 200;",
+							"tests[\"StatusCode200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "JWT {{JWT_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/user/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/user/<int:user_id> Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3f358450-45f7-4dae-bdb7-16446c0eba66",
+						"exec": [
+							"tests[\"ShortResponseTime\"] = responseTime < 200;",
+							"tests[\"StatusCode200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "JWT {{JWT_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/user/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"1"
 					]
 				}
 			},
