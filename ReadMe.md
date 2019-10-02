@@ -1,6 +1,6 @@
 ## PIP Install
 * Flask-RESTful
-* Flask-JWT
+* Flask-JWT-Extended
 * Flask-SQLAlchemy
 * pylint-sqlalchemy
 
